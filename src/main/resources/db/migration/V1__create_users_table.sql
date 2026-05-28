@@ -1,0 +1,14 @@
+CREATE TABLE users
+(
+    id BIGSERIAL PRIMARY KEY,
+    username VARCHAR(50) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    role VARCHAR(20) NOT NULL,
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW()
+);
+
+ALTER TABLE users
+    ADD CONSTRAINT chk_user_role
+        CHECK(role IN('ADMIN', 'FLEET_MANAGER'));
