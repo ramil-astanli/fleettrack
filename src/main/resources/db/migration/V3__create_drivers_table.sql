@@ -6,9 +6,11 @@ CREATE TABLE drivers
     license_number VARCHAR(30)  NOT NULL UNIQUE,
     phone          VARCHAR(20),
     email          VARCHAR(100) UNIQUE,
-    vehicle_id     BIGINT REFERENCES vehicles (id) ON DELETE SET NULL,
+    vehicle_id     BIGINT REFERENCES vehicles(id) ON DELETE SET NULL,
     created_at     TIMESTAMP DEFAULT NOW(),
-    updated_at     TIMESTAMP DEFAULT NOW()
+    updated_at     TIMESTAMP DEFAULT NOW(),
+    created_by     VARCHAR(50),
+    updated_by     VARCHAR(50)
 );
 
 CREATE UNIQUE INDEX idx_drivers_vehicle_id
