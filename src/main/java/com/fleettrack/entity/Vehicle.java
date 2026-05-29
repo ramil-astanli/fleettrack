@@ -4,6 +4,8 @@ import com.fleettrack.enums.VehicleStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.JdbcType;
+import org.hibernate.dialect.type.PostgreSQLEnumJdbcType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,13 +32,13 @@ public class Vehicle extends BaseEntity {
     private String licensePlate;
 
     @Enumerated(EnumType.STRING)
+    @JdbcType(PostgreSQLEnumJdbcType.class)
     @Column(nullable = false, columnDefinition = "vehicle_status")
     private VehicleStatus status = VehicleStatus.ACTIVE;
 
     @OneToOne(mappedBy = "vehicle", fetch = FetchType.LAZY)
     private Driver assignedDriver;
 
-    // ← BU ƏLAVƏ EDİLDİ
     @OneToMany(mappedBy = "vehicle",
             cascade = CascadeType.ALL,
             fetch = FetchType.LAZY)
