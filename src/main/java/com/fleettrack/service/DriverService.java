@@ -10,6 +10,8 @@ import com.fleettrack.repository.DriverRepository;
 import com.fleettrack.repository.VehicleRepository;
 import com.fleettrack.specification.DriverSpecification;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -43,6 +45,7 @@ public class DriverService {
                 .map(driverMapper::toResponse);
     }
 
+    @Cacheable(value = "vehicle", key = "#id")
     public DriverResponse getById(Long id) {
         return driverRepository.findById(id)
                 .map(driverMapper::toResponse)
@@ -51,6 +54,7 @@ public class DriverService {
     }
 
     @Transactional
+    @CacheEvict(value = "vehicle", allEntries = true)
     public DriverResponse create(DriverRequest request) {
 
         if (driverRepository.existsByLicenseNumber(
@@ -62,7 +66,6 @@ public class DriverService {
 
         Driver driver = driverMapper.toEntity(request);
 
-        // Maşın təyin edilibsə
         if (request.getVehicleId() != null) {
             Vehicle vehicle = vehicleRepository
                     .findById(request.getVehicleId())
@@ -84,6 +87,7 @@ public class DriverService {
     }
 
     @Transactional
+    @CacheEvict(value = "vehicle", key = "#id")
     public DriverResponse update(Long id, DriverRequest request) {
 
         Driver driver = driverRepository.findById(id)
@@ -107,6 +111,7 @@ public class DriverService {
     }
 
     @Transactional
+    @CacheEvict(value = "vehicle", key = "#id")
     public void delete(Long id) {
         if (!driverRepository.existsById(id)) {
             throw new ResourceNotFoundException("Sürücü", id);

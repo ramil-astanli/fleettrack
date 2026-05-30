@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>FleetTrack — Canlı İzləmə</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.6.1/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+    <style>
+        body { font-family: Arial; padding: 20px; background: #1a1a2e; color: #fff; }
+        .card { background: #16213e; padding: 15px; margin: 10px 0; border-radius: 8px; }
+        button { padding: 10px 20px; margin: 5px; border: none; border-radius: 5px; cursor: pointer; }
+        #connect { background: #0f3460; color: white; }
+        #send { background: #e94560; color: white; }
+        #autoStart { background: #2ecc71; color: white; }
+        #autoStop { background: #e67e22; color: white; }
+        #log { background: #0d0d0d; padding: 10px; border-radius: 5px; height: 200px; overflow-y: scroll; }
+    </style>
+</head>
+<body>
+<h2>🚗 FleetTrack — Real-Time Location</h2>
+
+<div class="card">
+    <h3>Qoşulma</h3>
+    <button id="connect" onclick="connect()">WebSocket-ə Qoşul</button>
+    <button onclick="disconnect()">Ayır</button>
+    <p id="status">Qoşulmayıb</p>
+</div>
+
+<div class="card">
+    <h3>GPS Göndər</h3>
+    Vehicle ID: <input id="vehicleId" value="1" style="padding:5px; margin:5px;">
+    Lat: <input id="lat" value="40.4093" style="padding:5px; margin:5px;">
+    Lng: <input id="lng" value="49.8671" style="padding:5px; margin:5px;">
+    Speed: <input id="speed" value="60" style="padding:5px; margin:5px;">
+    <br>
+    <button id="send" onclick="sendLocation()">GPS Göndər</button>
+    <button id="autoStart" onclick="startAutoSend()">▶ Avtomatik Başlat</button>
+    <button id="autoStop" onclick="stopAutoSend()">⏹ Avtomatik Dayandır</button>
+    <span id="autoStatus" style="margin-left:10px;"></span>
+</div>
+
+<div class="card">
+    <h3>Canlı Yeniləmələr</h3>
+    <div id="log"></div>
+</div>
+
+<script>
+    let stompClient = null;
+    let autoSend = null;
+
+    function connect() {
+        const socket = new SockJS('http://localhost:8091/ws/location');
+        stompClient = Stomp.over(socket);
+
+        stompClient.connect({}, function(frame) {
+            document.getElementById('status').innerHTML =
+                '✅ Qoşuldu';
+
+            stompClient.subscribe('/topic/location',
+                function(message) {
+                    const data = JSON.parse(message.body);
+                    addLog('📍 ' + data.licensePlate +
+                        ' → ' + data.latitude +
+                        ', ' + data.longitude +
+                        ' — ' + data.speed + ' km/h');
+                });
+        });
+    }
+
+    function disconnect() {
+        stopAutoSend();
+        if (stompClient) stompClient.disconnect();
+        document.getElementById('status').innerHTML = 'Ayrıldı';
+    }
+
+    function sendLocation() {
+        if (!stompClient) {
+            addLog('❌ Əvvəlcə qoşulun!');
+            return;
+        }
+
+        const payload = {
+            vehicleId: parseInt(document.getElementById('vehicleId').value),
+            latitude:  parseFloat(document.getElementById('lat').value),
+            longitude: parseFloat(document.getElementById('lng').value),
+            speed:     parseFloat(document.getElementById('speed').value)
+        };
+
+        stompClient.send('/app/location', {}, JSON.stringify(payload));
+    }
+
+    function startAutoSend() {
+        if (!stompClient) {
+            addLog('❌ Əvvəlcə qoşulun!');
+            return;
+        }
+
+        if (autoSend) return;
+
+        document.getElementById('autoStatus').innerHTML =
+            '🟢 Avtomatik aktiv — hər 3 saniyə';
+
+        autoSend = setInterval(function() {
+            // Hər dəfə bir az fərqli koordinat — hərəkət simulyasiyası
+            let lat = parseFloat(
+                document.getElementById('lat').value);
+            let lng = parseFloat(
+                document.getElementById('lng').value);
+            let speed = parseFloat(
+                document.getElementById('speed').value);
+
+            // Kiçik dəyişiklik əlavə et
+            lat = (lat + (Math.random() - 0.5) * 0.001)
+                .toFixed(4);
+            lng = (lng + (Math.random() - 0.5) * 0.001)
+                .toFixed(4);
+            speed = Math.max(0,
+                speed + (Math.random() - 0.5) * 5)
+                .toFixed(1);
+
+            document.getElementById('lat').value = lat;
+            document.getElementById('lng').value = lng;
+            document.getElementById('speed').value = speed;
+
+            sendLocation();
+        }, 3000);
+    }
+
+    function stopAutoSend() {
+        clearInterval(autoSend);
+        autoSend = null;
+        document.getElementById('autoStatus').innerHTML =
+            '🔴 Avtomatik dayandırıldı';
+    }
+
+    function addLog(message) {
+        const log = document.getElementById('log');
+        log.innerHTML = new Date().toLocaleTimeString() +
+            ' — ' + message + '<br>' + log.innerHTML;
+    }
+</script>
+</body>
+</html>

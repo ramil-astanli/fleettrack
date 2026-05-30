@@ -15,15 +15,11 @@ public interface VehicleRepository
         extends JpaRepository<Vehicle, Long>,
                 JpaSpecificationExecutor<Vehicle> {
 
-    // Status-a görə filter
     Page<Vehicle> findByStatus(VehicleStatus status, Pageable pageable);
 
-    // İl aralığına görə filter
     Page<Vehicle> findByYearBetween(int from, int to, Pageable pageable);
 
-    // License plate mövcuddurmu
     boolean existsByLicensePlate(String licensePlate);
 
-    // Bütün aktiv maşınlar — cache üçün
     List<Vehicle> findAllByStatus(VehicleStatus status);
 }

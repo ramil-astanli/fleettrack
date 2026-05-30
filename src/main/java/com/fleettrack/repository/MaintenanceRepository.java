@@ -20,14 +20,16 @@ public interface MaintenanceRepository
         Long vehicleId, Pageable pageable
     );
 
-    // Növbəti xidməti yaxınlaşanlar — Scheduler üçün
     @Query("SELECT m FROM MaintenanceRecord m " +
-           "WHERE m.nextServiceDate BETWEEN :from AND :to")
-    List<MaintenanceRecord> findUpcomingMaintenance(
-        @Param("from") LocalDate from,
-        @Param("to") LocalDate to
-    );
+            "JOIN FETCH m.vehicle " +
+            "WHERE m.nextServiceDate < :date")
+    List<MaintenanceRecord> findByNextServiceDateBefore(
+            @Param("date") LocalDate date);
 
-    // Gecikmiş xidmətlər
-    List<MaintenanceRecord> findByNextServiceDateBefore(LocalDate date);
+    @Query("SELECT m FROM MaintenanceRecord m " +
+            "JOIN FETCH m.vehicle " +
+            "WHERE m.nextServiceDate BETWEEN :from AND :to")
+    List<MaintenanceRecord> findUpcomingMaintenance(
+            @Param("from") LocalDate from,
+            @Param("to") LocalDate to);
 }

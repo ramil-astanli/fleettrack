@@ -3,6 +3,7 @@ package com.fleettrack.dto.response;
 import com.fleettrack.enums.VehicleStatus;
 import lombok.*;
 
+import java.io.Serializable;
 import java.time.Instant;
 import java.time.LocalDateTime;
 
@@ -10,7 +11,7 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class VehicleResponse {
+public class VehicleResponse implements Serializable {
 
     private Long id;
     private String make;

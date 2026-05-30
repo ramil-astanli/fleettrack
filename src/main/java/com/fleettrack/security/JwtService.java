@@ -22,7 +22,6 @@ public class JwtService {
     @Value("${jwt.expiration}")
     private long expiration;
 
-    // Token yarat
     public String generateToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("role", userDetails.getAuthorities()
@@ -41,19 +40,16 @@ public class JwtService {
                 .compact();
     }
 
-    // Token etibarlıdırmı
     public boolean isTokenValid(String token, UserDetails userDetails) {
         final String username = extractUsername(token);
         return username.equals(userDetails.getUsername())
                 && !isTokenExpired(token);
     }
 
-    // Username-i tokendən çıxar
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
     }
 
-    // Token vaxtı keçibmi
     private boolean isTokenExpired(String token) {
         return extractExpiration(token).before(new Date());
     }
@@ -62,7 +58,6 @@ public class JwtService {
         return extractClaim(token, Claims::getExpiration);
     }
 
-    // Tokendən istənilən məlumatı çıxar
     public <T> T extractClaim(String token,
                                Function<Claims, T> claimsResolver) {
         final Claims claims = extractAllClaims(token);

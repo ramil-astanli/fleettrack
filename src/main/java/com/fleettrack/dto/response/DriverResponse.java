@@ -2,6 +2,7 @@ package com.fleettrack.dto.response;
 
 import lombok.*;
 
+import java.io.Serializable;
 import java.time.Instant;
 import java.time.LocalDateTime;
 
@@ -9,7 +10,7 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class DriverResponse {
+public class DriverResponse implements Serializable {
 
     private Long id;
     private String firstName;

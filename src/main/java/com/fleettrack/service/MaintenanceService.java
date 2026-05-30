@@ -21,11 +21,9 @@ public class MaintenanceService {
     private final VehicleRepository vehicleRepository;
     private final MaintenanceMapper maintenanceMapper;
 
-    // Maşının bütün qeydləri
     public Page<MaintenanceResponse> getAllByVehicle(
             Long vehicleId, Pageable pageable) {
 
-        // Maşın mövcuddurmu yoxla
         if (!vehicleRepository.existsById(vehicleId)) {
             throw new ResourceNotFoundException("Maşın", vehicleId);
         }
@@ -35,7 +33,6 @@ public class MaintenanceService {
                 .map(maintenanceMapper::toResponse);
     }
 
-    // Tək qeyd
     public MaintenanceResponse getById(Long vehicleId, Long id) {
 
         return maintenanceRepository.findById(id)
@@ -46,7 +43,6 @@ public class MaintenanceService {
                         "Texniki xidmət qeydi", id));
     }
 
-    // Yeni qeyd əlavə et
     @Transactional
     public MaintenanceResponse create(
             Long vehicleId, MaintenanceRequest request) {
@@ -64,7 +60,6 @@ public class MaintenanceService {
                 maintenanceRepository.save(record));
     }
 
-    // Qeydi sil
     @Transactional
     public void delete(Long vehicleId, Long id) {
 

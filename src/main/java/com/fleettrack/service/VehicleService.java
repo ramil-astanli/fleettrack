@@ -10,6 +10,8 @@ import com.fleettrack.mapper.VehicleMapper;
 import com.fleettrack.repository.VehicleRepository;
 import com.fleettrack.specification.VehicleSpecification;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -41,6 +43,7 @@ public class VehicleService {
                 .map(vehicleMapper :: toResponse);
     }
 
+    @Cacheable(value = "vehicle", key = "#id")
     public VehicleResponse getById(Long id) {
         return vehicleRepository.findById(id)
                 .map(vehicleMapper::toResponse)
@@ -49,6 +52,7 @@ public class VehicleService {
     }
 
     @Transactional
+    @CacheEvict(value = {"vehicle"}, allEntries = true)
     public VehicleResponse create(VehicleRequest request) {
         if(vehicleRepository.existsByLicensePlate(
                 request.getLicensePlate())) {
@@ -63,13 +67,13 @@ public class VehicleService {
     }
 
     @Transactional
+    @CacheEvict(value = {"vehicle"}, allEntries = true)
     public VehicleResponse update(Long id, VehicleRequest request) {
 
         Vehicle vehicle = vehicleRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Maşın", id));
 
-        // Başqa maşında eyni nişan varsa xəta
         if (!vehicle.getLicensePlate()
                 .equals(request.getLicensePlate()) &&
                 vehicleRepository.existsByLicensePlate(
@@ -86,6 +90,8 @@ public class VehicleService {
 
     // Sil
     @Transactional
+    @CacheEvict(value = {"vehicle"}, allEntries = true)
+
     public void delete(Long id) {
         if (!vehicleRepository.existsById(id)) {
             throw new ResourceNotFoundException("Maşın", id);

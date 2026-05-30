@@ -22,6 +22,5 @@ public interface DriverRepository
 
     boolean existsByLicenseNumber(String licenseNumber);
 
-    // Maşına təyin edilmiş sürücü
     Optional<Driver> findByVehicleId(Long vehicleId);
 }
