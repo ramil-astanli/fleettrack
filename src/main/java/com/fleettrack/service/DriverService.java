@@ -72,7 +72,6 @@ public class DriverService {
                     .orElseThrow(() -> new ResourceNotFoundException(
                             "Maşın", request.getVehicleId()));
 
-            // Maşında artıq sürücü varsa
             if (driverRepository.findByVehicleId(
                     vehicle.getId()).isPresent()) {
                 throw new BusinessException(

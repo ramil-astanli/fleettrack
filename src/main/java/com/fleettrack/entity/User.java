@@ -15,7 +15,7 @@ import lombok.experimental.SuperBuilder;
 public class User extends BaseEntity {
 
     @Column(name = "username", unique = true, nullable = false, length = 50)
-    private String username;//burada names olsa idi Column name qarsisinda ne olardi?buna cavab tap
+    private String username;
 
     @Column(name = "password", nullable = false, length = 255)
     private String password;

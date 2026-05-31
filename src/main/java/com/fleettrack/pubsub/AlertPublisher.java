@@ -16,7 +16,6 @@ public class AlertPublisher {
     private final RedisTemplate<String, Object> redisTemplate;
 
     public void publishMaintenanceAlert(String licensePlate, String date, String driverEmail) {
-        // Məlumatı Map şəklində yığırıq (JSON-a çevriləcək)
         Map<String, String> payload = Map.of(
                 "licensePlate", licensePlate,
                 "date", date,
@@ -26,7 +25,7 @@ public class AlertPublisher {
 
         redisTemplate.convertAndSend(
                 RedisPubSubConfig.MAINTENANCE_ALERT_CHANNEL,
-                payload); // Artıq String yox, Object (JSON) göndəririk
+                payload);
 
         log.info("📢 JSON Pub/Sub yayımlandı: {}", payload, driverEmail);
     }

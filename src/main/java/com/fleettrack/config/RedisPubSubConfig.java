@@ -34,7 +34,6 @@ public class RedisPubSubConfig {
 
     @Bean
     public MessageListenerAdapter maintenanceListenerAdapter(AlertSubscriber alertSubscriber) {
-        // Serializer təyin etmirik, default olaraq String/Byte qəbul edəcək
         return new MessageListenerAdapter(alertSubscriber, "onMaintenanceAlert");
     }
 

@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.*;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -24,12 +25,14 @@ public class LocationController {
     }
 
     @GetMapping("/api/v1/locations")
+    @PreAuthorize("hasAnyRole('ADMIN', 'FLEET_MANAGER')")
     public ResponseEntity<Map<Long, LocationUpdate>> getAllLocations() {
         return ResponseEntity.ok(
                 locationService.getAllLastLocations());
     }
 
     @GetMapping("/api/v1/locations/{vehicleId}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'FLEET_MANAGER')")
     public ResponseEntity<LocationUpdate> getLocation(
             @PathVariable Long vehicleId) {
 

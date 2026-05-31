@@ -14,7 +14,6 @@ import java.util.*;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    // 404 — Tapılmadı
     @ExceptionHandler(ResourceNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleNotFound(ResourceNotFoundException ex) {
@@ -25,7 +24,6 @@ public class GlobalExceptionHandler {
                 .build();
     }
 
-    // 400 — Biznes xətası
     @ExceptionHandler(BusinessException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleBusiness(BusinessException ex) {
@@ -36,7 +34,6 @@ public class GlobalExceptionHandler {
                 .build();
     }
 
-    // 400 — Validation xətaları
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleValidation(
@@ -71,7 +68,6 @@ public class GlobalExceptionHandler {
                 .build();
     }
 
-    // 403 — İcazə yoxdur
     @ExceptionHandler(AccessDeniedException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public ErrorResponse handleAccessDenied(
@@ -83,10 +79,10 @@ public class GlobalExceptionHandler {
                 .build();
     }
 
-    // 500 — Gözlənilməz xəta
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse handleGeneral(Exception ex) {
+        ex.printStackTrace();
         return ErrorResponse.builder()
                 .status(500)
                 .message("Daxili server xətası")

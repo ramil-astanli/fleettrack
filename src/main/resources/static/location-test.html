@@ -101,7 +101,6 @@
             '🟢 Avtomatik aktiv — hər 3 saniyə';
 
         autoSend = setInterval(function() {
-            // Hər dəfə bir az fərqli koordinat — hərəkət simulyasiyası
             let lat = parseFloat(
                 document.getElementById('lat').value);
             let lng = parseFloat(
@@ -109,7 +108,6 @@
             let speed = parseFloat(
                 document.getElementById('speed').value);
 
-            // Kiçik dəyişiklik əlavə et
             lat = (lat + (Math.random() - 0.5) * 0.001)
                 .toFixed(4);
             lng = (lng + (Math.random() - 0.5) * 0.001)

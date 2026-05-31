@@ -6,7 +6,9 @@ import com.fleettrack.service.DriverService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.*;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -17,31 +19,27 @@ public class DriverController {
     private final DriverService driverService;
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'FLEET_MANAGER')")
     public ResponseEntity<Page<DriverResponse>> getAll(
             @RequestParam(required = false) String lastName,
             @RequestParam(required = false) Boolean hasVehicle,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "id") String sortBy,
-            @RequestParam(defaultValue = "asc") String sortDir) {
-
-        Sort sort = sortDir.equalsIgnoreCase("desc")
-                ? Sort.by(sortBy).descending()
-                : Sort.by(sortBy).ascending();
-
-        Pageable pageable = PageRequest.of(page, size, sort);
+            @PageableDefault(size = 10, sort = "id")
+            Pageable pageable) {
 
         return ResponseEntity.ok(
-                driverService.getAll(lastName, hasVehicle, pageable));
+                driverService.getAll(
+                        lastName, hasVehicle, pageable));
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'FLEET_MANAGER')")
     public ResponseEntity<DriverResponse> getById(
             @PathVariable Long id) {
         return ResponseEntity.ok(driverService.getById(id));
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<DriverResponse> create(
             @Valid @RequestBody DriverRequest request) {
         return ResponseEntity
@@ -50,6 +48,7 @@ public class DriverController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<DriverResponse> update(
             @PathVariable Long id,
             @Valid @RequestBody DriverRequest request) {
@@ -58,6 +57,7 @@ public class DriverController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         driverService.delete(id);
         return ResponseEntity.noContent().build();

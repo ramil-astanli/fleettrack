@@ -60,7 +60,5 @@ public class NotificationService {
     public void sendOverdueMaintenanceAlert(String licensePlate, String overdueDate) {
         log.error("🚨 [GECİKMƏ] - {} nömrəli maşının texniki baxış vaxtı keçib! Son tarix idi: {}",
                 licensePlate, overdueDate);
-
-        // Eyni məntiqlə bura da mailSender əlavə edə bilərsən
     }
 }

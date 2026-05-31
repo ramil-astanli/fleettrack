@@ -63,7 +63,6 @@ public class AlertSubscriber {
         }
     }
 
-    // Mesajı String və ya Map olmağından asılı olmayaraq Map-ə çevirən köməkçi metod
     private Map<String, Object> parseMessage(Object message) throws Exception {
         if (message instanceof String) {
             return objectMapper.readValue((String) message, Map.class);

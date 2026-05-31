@@ -6,7 +6,9 @@ import com.fleettrack.service.MaintenanceService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.*;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -17,18 +19,14 @@ public class MaintenanceController {
     private final MaintenanceService maintenanceService;
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'FLEET_MANAGER')")
     public ResponseEntity<Page<MaintenanceResponse>> getAll(
             @PathVariable Long vehicleId,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "serviceDate") String sortBy,
-            @RequestParam(defaultValue = "desc") String sortDir) {
-
-        Sort sort = sortDir.equalsIgnoreCase("desc")
-                ? Sort.by(sortBy).descending()
-                : Sort.by(sortBy).ascending();
-
-        Pageable pageable = PageRequest.of(page, size, sort);
+            @PageableDefault(
+                    size = 10,
+                    sort = "serviceDate",
+                    direction = Sort.Direction.DESC)
+            Pageable pageable) {
 
         return ResponseEntity.ok(
                 maintenanceService.getAllByVehicle(
@@ -36,6 +34,7 @@ public class MaintenanceController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'FLEET_MANAGER')")
     public ResponseEntity<MaintenanceResponse> getById(
             @PathVariable Long vehicleId,
             @PathVariable Long id) {
@@ -44,15 +43,18 @@ public class MaintenanceController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'FLEET_MANAGER')")
     public ResponseEntity<MaintenanceResponse> create(
             @PathVariable Long vehicleId,
             @Valid @RequestBody MaintenanceRequest request) {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(maintenanceService.create(vehicleId, request));
+                .body(maintenanceService.create(
+                        vehicleId, request));
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> delete(
             @PathVariable Long vehicleId,
             @PathVariable Long id) {

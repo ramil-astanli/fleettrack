@@ -8,7 +8,6 @@ import org.mapstruct.*;
 @Mapper(componentModel = "spring")
 public interface VehicleMapper {
 
-    // Request → Entity
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
@@ -16,7 +15,6 @@ public interface VehicleMapper {
     @Mapping(target = "maintenanceRecords", ignore = true)
     Vehicle toEntity(VehicleRequest request);
 
-    // Entity → Response
     @Mapping(
         target = "assignedDriverName",
         expression = "java(vehicle.getAssignedDriver() != null ? " +
@@ -25,7 +23,6 @@ public interface VehicleMapper {
     )
     VehicleResponse toResponse(Vehicle vehicle);
 
-    // Update — mövcud entity-ni yenilə
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)

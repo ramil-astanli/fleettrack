@@ -13,7 +13,6 @@ public class VehicleSpecification {
                         cb.equal(root.get("status"), status);
     }
 
-    // İl aralığına görə filter
     public static Specification<Vehicle> yearBetween(
             Integer from, Integer to) {
         return (root, query, cb) -> {
@@ -26,7 +25,6 @@ public class VehicleSpecification {
         };
     }
 
-    // Marka-ya görə filter
     public static Specification<Vehicle> hasMake(String make) {
         return (root, query, cb) ->
                 make == null ? null :
@@ -34,7 +32,6 @@ public class VehicleSpecification {
                                 "%" + make.toLowerCase() + "%");
     }
 
-    // License plate-ə görə filter
     public static Specification<Vehicle> hasLicensePlate(
             String licensePlate) {
         return (root, query, cb) ->

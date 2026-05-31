@@ -43,13 +43,12 @@ public class MaintenanceScheduler {
         upcoming.forEach(record -> {
             Driver driver = record.getVehicle().getAssignedDriver();
 
-            // Əgər maşına təhkim olunmuş sürücü varsa, onun emailini götürürük
             String driverEmail = (driver != null) ? driver.getEmail() : "admin@fleettrack.com";
 
             alertPublisher.publishMaintenanceAlert(
                     record.getVehicle().getLicensePlate(),
                     record.getNextServiceDate().toString(),
-                    driverEmail // Artıq 3-cü parametr olaraq ötürülür
+                    driverEmail
             );
         });
     }
@@ -73,16 +72,14 @@ public class MaintenanceScheduler {
         log.warn("⚠️ {} maşın gecikib", overdue.size());
 
         overdue.forEach(record -> {
-            // Sürücü obyektini götürürük
             Driver driver = record.getVehicle().getAssignedDriver();
 
-            // Əgər maşına təhkim olunmuş sürücü varsa, onun emailini götürürük
             String driverEmail = (driver != null) ? driver.getEmail() : "admin@fleettrack.com";
 
             alertPublisher.publishMaintenanceAlert(
                     record.getVehicle().getLicensePlate(),
                     record.getNextServiceDate().toString(),
-                    driverEmail // Artıq 3-cü parametr olaraq ötürülür
+                    driverEmail
             );
         });
     }

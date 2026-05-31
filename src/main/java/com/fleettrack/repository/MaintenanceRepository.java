@@ -15,7 +15,6 @@ import java.util.List;
 public interface MaintenanceRepository
         extends JpaRepository<MaintenanceRecord, Long> {
 
-    // Maşının bütün qeydləri
     Page<MaintenanceRecord> findByVehicleId(
         Long vehicleId, Pageable pageable
     );

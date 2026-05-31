@@ -88,14 +88,18 @@ public class VehicleService {
                 vehicleRepository.save(vehicle));
     }
 
-    // Sil
     @Transactional
     @CacheEvict(value = {"vehicle"}, allEntries = true)
-
     public void delete(Long id) {
-        if (!vehicleRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Maşın", id);
+
+        Vehicle vehicle = vehicleRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Maşın", id));
+
+        if (vehicle.getAssignedDriver() != null) {
+            vehicle.getAssignedDriver().setVehicle(null);
         }
-        vehicleRepository.deleteById(id);
+
+        vehicleRepository.delete(vehicle);
     }
 }
